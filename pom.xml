@@ -89,6 +89,29 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- Explicitly register Lombok as an annotation processor instead of
+                         relying on the compiler plugin to auto-detect it from the
+                         dependency classpath. Auto-detection is what's supposed to
+                         happen by default, and usually does, but is a known source of
+                         silent failures in clean CI/Docker builds depending on the exact
+                         Maven + compiler-plugin version combination - when it fails, you
+                         get exactly what shows up here: every Lombok-generated getter,
+                         setter, and builder simply doesn't exist, with no error pointing
+                         at Lombok itself. This makes the processor explicit so there's
+                         nothing left to auto-detect. -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
